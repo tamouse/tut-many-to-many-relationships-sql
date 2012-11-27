@@ -667,3 +667,23 @@ mysql> select users.id as uid, username, email, discountcode, discountrate from 
 3 rows in set (0.00 sec)
 
 mysql> 
+
+mysql> insert into usersdiscounts (user_id, discount_id) VALUES ((select id from users where username = 'joe'), (select id from discounts where discountcode = 'd4'));
+Query OK, 1 row affected (0.19 sec)
+
+mysql> select users.id as uid, username, email, discountcode, discountrate from users, discounts, usersdiscounts where users.id = usersdiscounts.user_id and discounts.id = usersdiscounts.discount_id order by uid;
++-----+----------+------------------+--------------+--------------+
+| uid | username | email            | discountcode | discountrate |
++-----+----------+------------------+--------------+--------------+
+|   1 | joe      | joe@example.com  | d3           |        10.00 |
+|   1 | joe      | joe@example.com  | d1           |        20.00 |
+|   1 | joe      | joe@example.com  | d4           |         5.00 |
+|   2 | jane     | jane@example.com | d3           |        10.00 |
++-----+----------+------------------+--------------+--------------+
+4 rows in set (0.00 sec)
+
+mysql> 
+
+mysql> insert into usersdiscounts (user_id, discount_id) VALUES ((select id from users where username = 'joe'), (select id from discounts where discountcode = 'd4'));
+ERROR 1062 (23000): Duplicate entry '1-4' for key 'PRIMARY'
+mysql> 
